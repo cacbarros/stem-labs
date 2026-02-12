@@ -4,22 +4,27 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def generate_linearization_plot(
-    out_pdf="../assets/linearizacao_plot.pdf",
-    show=True,
-    seed=0,
-):
+def generate_linearization_plot(out_pdf=None, show=True, seed=0):
     """
     Linearizacao Ec vs v^2 (2-em-1):
-      - show=True  -> mostra no Jupyter/interactive
-      - guarda sempre PDF (out_pdf)
+      - show=True  -> mostra no Jupyter/Colab
+      - guarda sempre PDF
 
-    Colocar este ficheiro em:
-      physics10/energia_movimentos/src_graphics/linearizacao_massa.py
-
-    Saida (por defeito) em:
-      physics10/energia_movimentos/assets/linearizacao_plot.pdf
+    out_pdf:
+      - None: guarda por defeito em ../assets/linearizacao_plot.pdf
+              (calculado a partir da localizacao deste ficheiro)
+      - str/Path: caminho explicitamente fornecido
     """
+
+    # --- Resolver caminho de saida de forma robusta ---
+    here = Path(__file__).resolve().parent          # .../src_graphics
+    base = here.parent                               # .../energia_movimentos
+    if out_pdf is None:
+        out_pdf = base / "assets" / "linearizacao_plot.pdf"
+    else:
+        out_pdf = Path(out_pdf)
+
+    out_pdf.parent.mkdir(parents=True, exist_ok=True)
 
     # --- Dados simulados (v^2 em m^2/s^2, Ec em J) ---
     v2 = np.array([0, 1, 4, 9, 16, 25], dtype=float)
@@ -31,7 +36,7 @@ def generate_linearization_plot(
     # --- Ajuste linear Ec = a*v^2 + b ---
     a, b = np.polyfit(v2, ec, 1)
 
-    fig, ax = plt.subplots(figsize=(6, 3.5))
+    fig, ax = plt.subplots(figsize=(6ी(6, 3.5))
     ax.scatter(v2, ec, label="Dados experimentais")
     ax.plot(v2, a * v2 + b, label=fr"Ajuste: $E_c = {a:.3f}v^2 + {b:.3f}$")
 
@@ -42,16 +47,13 @@ def generate_linearization_plot(
     ax.grid(True, linestyle="--", alpha=0.7)
 
     fig.tight_layout()
-
-    out_path = Path(out_pdf)
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out_path, format="pdf", bbox_inches="tight")
+    fig.savefig(out_pdf, format="pdf", bbox_inches="tight")
 
     if show:
         plt.show()
 
     plt.close(fig)
-    return out_path, a, b
+    return out_pdf, a, b
 
 
 if __name__ == "__main__":
