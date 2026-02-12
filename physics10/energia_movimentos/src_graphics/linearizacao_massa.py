@@ -17,8 +17,9 @@ def generate_linearization_plot(out_pdf=None, show=True, seed=0):
     """
 
     # --- Resolver caminho de saida de forma robusta ---
-    here = Path(__file__).resolve().parent          # .../src_graphics
-    base = here.parent                               # .../energia_movimentos
+    here = Path(__file__).resolve().parent  # .../src_graphics
+    base = here.parent                      # .../energia_movimentos
+
     if out_pdf is None:
         out_pdf = base / "assets" / "linearizacao_plot.pdf"
     else:
@@ -36,9 +37,13 @@ def generate_linearization_plot(out_pdf=None, show=True, seed=0):
     # --- Ajuste linear Ec = a*v^2 + b ---
     a, b = np.polyfit(v2, ec, 1)
 
-    fig, ax = plt.subplots(figsize=(6ी(6, 3.5))
+    fig, ax = plt.subplots(figsize=(6, 3.5))
     ax.scatter(v2, ec, label="Dados experimentais")
-    ax.plot(v2, a * v2 + b, label=fr"Ajuste: $E_c = {a:.3f}v^2 + {b:.3f}$")
+    ax.plot(
+        v2,
+        a * v2 + b,
+        label=fr"Ajuste: $E_c = {a:.3f}v^2 + {b:.3f}$",
+    )
 
     ax.set_xlabel(r"$v^2\ (\mathrm{m^2\,s^{-2}})$")
     ax.set_ylabel(r"$E_c\ (\mathrm{J})$")
@@ -59,4 +64,5 @@ def generate_linearization_plot(out_pdf=None, show=True, seed=0):
 if __name__ == "__main__":
     path, a, b = generate_linearization_plot(show=False)
     print(f"Saved: {path} | a={a:.6f} | b={b:.6f}")
+
 
